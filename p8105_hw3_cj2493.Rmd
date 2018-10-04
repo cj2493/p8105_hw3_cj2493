@@ -9,5 +9,12 @@ editor_options:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggplot2)
 ```
 
+## Problem 1
+
+## Problem 2
+
+## Problem 3
