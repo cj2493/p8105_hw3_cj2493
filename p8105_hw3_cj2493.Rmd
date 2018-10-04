@@ -1,0 +1,13 @@
+---
+title: "p8105_hw3_cj2493"
+author: "Courtney Johnson"
+date: "October 4, 2018"
+output: github_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
