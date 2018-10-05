@@ -75,4 +75,44 @@ brfss_plot
 
 ## Problem 2
 
+Load the instacart data from the p8105.datasets package:
+
+```{r, load_instacart}
+data(instacart) %>%
+  janitor::clean_names()
+```
+
+Write a description of the dataset:
+
+The instacart data has `r nrow(instacart)` observations of `r ncol(instacart)` variables. Some of the variables include product name, the product id, the order in which it was added to the cart, what hour it was added, the id of its department, and number of days since the last time it was ordered. For example, here is a chunk of the dataset: 
+
+```{r}
+head(instacart)
+```
+
+In the first row, the item is Bulgarian yogurt, was part of order 1, had id 49302, was the first item added to the cart, was ordered 9 days prior, and was located in aisle 120. There are `r nrow(count(instacart, aisle_id))` aisles, and the most items are ordered from aisle `r which.max(count(instacart, aisle_id)$n)`.
+
+Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it. 
+
+```{r, aisle_plot}
+instacart %>%
+  group_by(aisle_id) 
+```
+
+Make a table showing the most popular item aisles "baking ingredients", "dog food care", and "packaged vegatables fruits".
+
+
+Make a table showing the mean hour of the day at which pink lady apples and coffee ice cream are ordered on each day of the week. 
+
+```{r, mean_hour_table}
+instacart %>%
+  filter(product_name == "Pink Lady Apple" | product_name == "Coffee Ice Cream") %>%
+  group_by(product_name, order_dow) %>%
+  summarize(mean_hour = mean(order_hour_of_day)) %>%
+  spread(key = order_dow, value = mean_hour) %>%
+  knitr::kable()
+```
+
+
+
 ## Problem 3
