@@ -23,6 +23,7 @@ library(p8105.datasets)
 data(brfss_smart2010) 
 brfss_smart2010 = janitor::clean_names(brfss_smart2010) %>%
   filter(topic == "Overall Health") %>%
+  select(-class, -topic, -question, -sample_size, -c(confidence_limit_low:geo_location)) %>%
   mutate(response = factor(response, labels = c("Excellent", "Very Good", "Good", "Fair", "Poor")))
 ```
 
@@ -59,7 +60,18 @@ brfss_table_data = filter(brfss_smart2010, year == 2002 | year == 2006 | year ==
 
 brfss_table_data
 ```
- 
+
+For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five panel plot that shows, for each response category separately, the distribution of these state level averages over time. 
+
+```{r, five_panel_plot}
+brfss_plot = brfss_smart2010 %>%
+  group_by(year, locationabbr, response) %>%
+  summarize(mean_prop = mean(data_value)) %>%
+  ggplot(aes(x = year, y = mean_prop)) + geom_point() + facet_grid(~response)
+
+brfss_plot
+```
+
 
 ## Problem 2
 
