@@ -39,6 +39,28 @@ brfss_2002 = filter(brfss_smart2010, year == 2002) %>%
 
 In 2002, the states that had 7 locations represented were the following: `r brfss_2002$state`.
 
+Make a "spaghetti plot" that shows the number of observations in each state from 2002 to 2010:
+
+```{r, spaghetti plot}
+
+```
+
+Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of "Excellent"
+ responses across locations in NY state.
+ 
+```{r, table}
+brfss_table_data = filter(brfss_smart2010, year == 2002 | year == 2006 | year == 2010) %>%
+  filter(locationabbr == "NY") %>%
+  filter(response == "Excellent") %>%
+  group_by(year) %>%
+  summarize(mean_excellent = mean(data_value),
+         sd_excellent = sd(data_value)) %>%
+  knitr::kable()
+
+brfss_table_data
+```
+ 
+
 ## Problem 2
 
 ## Problem 3
