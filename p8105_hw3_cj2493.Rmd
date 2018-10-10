@@ -40,10 +40,17 @@ brfss_2002 = filter(brfss_smart2010, year == 2002) %>%
 
 In 2002, the states that had 7 locations represented were the following: `r brfss_2002$state`.
 
-Make a "spaghetti plot" that shows the number of observations in each state from 2002 to 2010:
+Make a "spaghetti plot" that shows the number of locations in each state from 2002 to 2010:
 
-```{r, spaghetti plot}
-
+```{r, spaghetti_plot}
+brfss_spaghetti = brfss_smart2010 %>%
+  group_by(year, locationabbr) %>%
+  summarize(n_locations = n_distinct(locationdesc)) %>%
+  ggplot(aes(x = year, y = n_locations, color = locationabbr)) + 
+  labs(x = "Year", y = "Number of Locations", color = "State") +
+  geom_line(size = 1) +
+  theme(legend.position = "right")
+brfss_spaghetti
 ```
 
 Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of "Excellent"
@@ -67,7 +74,11 @@ For each year and state, compute the average proportion in each response categor
 brfss_plot = brfss_smart2010 %>%
   group_by(year, locationabbr, response) %>%
   summarize(mean_prop = mean(data_value)) %>%
-  ggplot(aes(x = year, y = mean_prop)) + geom_point() + facet_grid(~response)
+  ggplot(aes(x = year, y = mean_prop)) + 
+  geom_point() + 
+  facet_grid(~response) +
+  labs(x = "Year", y = "Mean Proportion", title = "Change in Mean Proportions Over Time by Response") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
 
 brfss_plot
 ```
@@ -78,15 +89,15 @@ brfss_plot
 Load the instacart data from the p8105.datasets package:
 
 ```{r, load_instacart}
-data(instacart) %>%
-  janitor::clean_names()
+data(instacart) 
+instacart = janitor::clean_names(instacart)
 ```
 
 Write a description of the dataset:
 
 The instacart data has `r nrow(instacart)` observations of `r ncol(instacart)` variables. Some of the variables include product name, the product id, the order in which it was added to the cart, what hour it was added, the id of its department, and number of days since the last time it was ordered. For example, here is a chunk of the dataset: 
 
-```{r}
+```{r, example}
 head(instacart)
 ```
 
@@ -95,11 +106,29 @@ In the first row, the item is Bulgarian yogurt, was part of order 1, had id 4930
 Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it. 
 
 ```{r, aisle_plot}
-instacart %>%
-  group_by(aisle_id) 
+instacart_num_items = instacart %>%
+  group_by(aisle) %>%
+  summarize(items_ordered = n()) %>%
+  ggplot(aes(x = aisle, y = items_ordered)) +
+  geom_bar(stat = "identity") +
+  labs(x = "Aisle", y = "Number of Items Ordered", title = "Number of Items Ordered in Each Aisle") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+
+
+instacart_num_items
 ```
 
-Make a table showing the most popular item aisles "baking ingredients", "dog food care", and "packaged vegatables fruits".
+Make a table showing the most popular item in each of the aisles "baking ingredients", "dog food care", and "packaged vegatables fruits".
+
+```{r, pop_aisles}
+pop_aisles = filter(instacart, aisle == "baking ingredients" | aisle == "dog food care" | aisle == "packaged vegetables fruits") %>%
+  group_by(aisle, product_name) %>%
+  summarize(product_count = n()) %>%
+  filter(product_count == max(product_count)) %>%
+  knitr::kable()
+pop_aisles
+```
+
 
 
 Make a table showing the mean hour of the day at which pink lady apples and coffee ice cream are ordered on each day of the week. 
