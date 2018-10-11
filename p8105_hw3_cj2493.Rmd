@@ -8,10 +8,16 @@ editor_options:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
 library(tidyverse)
 library(ggplot2)
 library(openintro)
+library(p8105.datasets)
+library(patchwork)
 ```
 
 ## Problem 1
@@ -19,7 +25,6 @@ library(openintro)
 Load BRFSS data from the p8105.datasets package and clean:
 
 ```{r, load_brfss}
-library(p8105.datasets)
 data(brfss_smart2010) 
 brfss_smart2010 = janitor::clean_names(brfss_smart2010) %>%
   filter(topic == "Overall Health") %>%
@@ -134,14 +139,72 @@ pop_aisles
 Make a table showing the mean hour of the day at which pink lady apples and coffee ice cream are ordered on each day of the week. 
 
 ```{r, mean_hour_table}
-instacart %>%
+mean_hour = instacart %>%
   filter(product_name == "Pink Lady Apple" | product_name == "Coffee Ice Cream") %>%
   group_by(product_name, order_dow) %>%
   summarize(mean_hour = mean(order_hour_of_day)) %>%
   spread(key = order_dow, value = mean_hour) %>%
   knitr::kable()
+
+mean_hour
+```
+
+
+## Problem 3
+
+Load the ny_noaa data from the p8105.datasets package:
+
+```{r, load_ny_noaa}
+data(ny_noaa)
+ny_noaa = janitor::clean_names(ny_noaa)
+```
+
+Describe the data:
+
+Clean the data:
+
+```{r, clean_ny_noaa}
+tidy_ny_noaa = separate(ny_noaa, date, into = c("year", "month", "day"), sep = "-") %>%
+  mutate(year = as.numeric(year), 
+         month = as.numeric(month), 
+         day = as.numeric(day), 
+         tmax = as.numeric(tmax)/10, 
+         tmin = as.numeric(tmin)/10,
+         prcp = prcp/10
+         )
+```
+
+Make a two-panel plot showing the average max temperature in January and in July in each station across years.
+
+```{r}
+jan_jul_ny_noaa = filter(tidy_ny_noaa, month == 1 | month == 7) %>%
+  mutate(month = month.name[month]) %>%
+  group_by(year, month) %>%
+  summarize(mean_tmax = mean(tmax, na.rm = TRUE)) %>%
+  ggplot(aes(x = year, y = mean_tmax)) +
+  geom_line() + 
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) +
+  labs(x = "Year", y = "Mean Maximum Temperature, in Celsius", title = "Change in Temperature in New York") + 
+  facet_grid(~month) 
+
+jan_jul_ny_noaa
+```
+
+Make a two panel plot (i) showing tmax vs tmin for the full dataset, and (ii) showing the distribution of snowfall values greater than 0 and less than 100 separately by year
+
+```{r, two_panel}
+tmax_vs_tmin = tidy_ny_noaa %>%
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_smooth()
+
+snow_dist = filter(tidy_ny_noaa, snow > 0 & snow < 100) %>%
+  mutate(year = as.character(year)) %>%
+  group_by(year) %>%
+  ggplot(aes(x = snow, fill = year)) +
+  geom_density(alpha = .3)  
+
+tmax_vs_tmin + snow_dist
 ```
 
 
 
-## Problem 3
