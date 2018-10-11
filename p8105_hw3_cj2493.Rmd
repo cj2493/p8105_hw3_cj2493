@@ -112,12 +112,11 @@ Make a plot that shows the number of items ordered in each aisle. Order aisles s
 
 ```{r, aisle_plot}
 instacart_num_items = instacart %>%
-  group_by(aisle) %>%
+  group_by(aisle_id) %>%
   summarize(items_ordered = n()) %>%
-  ggplot(aes(x = aisle, y = items_ordered)) +
+  ggplot(aes(x = aisle_id, y = items_ordered)) +
   geom_bar(stat = "identity") +
-  labs(x = "Aisle", y = "Number of Items Ordered", title = "Number of Items Ordered in Each Aisle") +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5))
+  labs(x = "Aisle Number", y = "Number of Items Ordered", title = "Number of Items Ordered in Each Aisle")
 
 
 instacart_num_items
@@ -143,7 +142,9 @@ mean_hour = instacart %>%
   filter(product_name == "Pink Lady Apple" | product_name == "Coffee Ice Cream") %>%
   group_by(product_name, order_dow) %>%
   summarize(mean_hour = mean(order_hour_of_day)) %>%
+  mutate(order_dow = c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")) %>%
   spread(key = order_dow, value = mean_hour) %>%
+  select(product_name, Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, Saturday) %>%
   knitr::kable()
 
 mean_hour
