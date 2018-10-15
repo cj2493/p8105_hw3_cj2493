@@ -126,7 +126,7 @@ instacart_num_items_1 = instacart %>%
   ggplot(aes(x = aisle, y = items_ordered)) +
   geom_bar(stat = "identity") +
   labs(x = "Aisle", y = "Number of Items Ordered", title = "Number of Items Ordered in Each Aisle", cex = 0.5) +
-  theme(text = element_text(size = 8)) +
+  theme(text = element_text(size = 5)) +
   coord_flip()
 
 instacart_num_items_2 = instacart %>%
@@ -136,7 +136,7 @@ instacart_num_items_2 = instacart %>%
   ggplot(aes(x = aisle, y = items_ordered)) +
   geom_bar(stat = "identity") +
   labs(x = "Aisle", y = "Number of Items Ordered", title = "Number of Items Ordered in Each Aisle") +
-  theme(text = element_text(size = 8)) +
+  theme(text = element_text(size = 5)) +
   coord_flip()
 
 instacart_num_items_1 + instacart_num_items_2
